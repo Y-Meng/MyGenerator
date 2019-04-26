@@ -101,25 +101,30 @@ public class CommentGeneratorDemoImpl implements CommentGenerator{
     @Override
     public void addGeneralMethodAnnotation(Method method, IntrospectedTable introspectedTable, Set<FullyQualifiedJavaType> set) {
 
+        System.out.println("addGeneralMethodAnnotation(method,introspectedTable,set)-" + method.getName());
     }
 
     @Override
     public void addGeneralMethodAnnotation(Method method, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn, Set<FullyQualifiedJavaType> set) {
 
+        System.out.println("addGeneralMethodAnnotation(method,introspectedTable,introspectedColumn,set)-" + method.getName());
     }
 
     @Override
     public void addFieldAnnotation(Field field, IntrospectedTable introspectedTable, Set<FullyQualifiedJavaType> set) {
 
+        System.out.println("addFieldAnnotation(field,introspectedTable,set)-" + field.getName());
     }
 
     @Override
     public void addFieldAnnotation(Field field, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn, Set<FullyQualifiedJavaType> set) {
 
+        System.out.println("addFieldAnnotation(field,introspectedTable,introspectedColumn,set)-" + field.getName());
     }
 
     @Override
     public void addClassAnnotation(InnerClass innerClass, IntrospectedTable introspectedTable, Set<FullyQualifiedJavaType> set) {
 
+        System.out.println("addClassAnnotation(innerClass,introspectedTable,set)-" + innerClass.getType());
     }
 }

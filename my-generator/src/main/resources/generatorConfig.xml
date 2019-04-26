@@ -12,7 +12,7 @@
 
     <context id="context" targetRuntime="MyBatis3">
 
-        <plugin type="com.mengcy.generator.sql2code.plugin.XmlMergePlugin"></plugin>
+        <plugin type="com.mengcy.generator.sql2code.plugin.XmlOverridePlugin"></plugin>
 
         <!-- !!!! Comment Generator Gonfigurations !!!! -->
         <commentGenerator type="com.mengcy.generator.sql2code.impl.CommentGeneratorImpl">
