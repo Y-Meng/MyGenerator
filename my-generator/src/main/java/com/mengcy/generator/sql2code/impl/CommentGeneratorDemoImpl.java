@@ -6,6 +6,7 @@ import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.dom.java.*;
 import org.mybatis.generator.api.dom.xml.XmlElement;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * @author mengcy
@@ -95,5 +96,30 @@ public class CommentGeneratorDemoImpl implements CommentGenerator{
     public void addRootComment(XmlElement xmlElement) {
         // 生成 Mapper.xml 调用
         System.out.println("addRootComment(xmlElement)-" + xmlElement.getName());
+    }
+
+    @Override
+    public void addGeneralMethodAnnotation(Method method, IntrospectedTable introspectedTable, Set<FullyQualifiedJavaType> set) {
+
+    }
+
+    @Override
+    public void addGeneralMethodAnnotation(Method method, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn, Set<FullyQualifiedJavaType> set) {
+
+    }
+
+    @Override
+    public void addFieldAnnotation(Field field, IntrospectedTable introspectedTable, Set<FullyQualifiedJavaType> set) {
+
+    }
+
+    @Override
+    public void addFieldAnnotation(Field field, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn, Set<FullyQualifiedJavaType> set) {
+
+    }
+
+    @Override
+    public void addClassAnnotation(InnerClass innerClass, IntrospectedTable introspectedTable, Set<FullyQualifiedJavaType> set) {
+
     }
 }

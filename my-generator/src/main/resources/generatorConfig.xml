@@ -12,6 +12,8 @@
 
     <context id="context" targetRuntime="MyBatis3">
 
+        <plugin type="com.mengcy.generator.sql2code.plugin.XmlMergePlugin"></plugin>
+
         <!-- !!!! Comment Generator Gonfigurations !!!! -->
         <commentGenerator type="com.mengcy.generator.sql2code.impl.CommentGeneratorImpl">
             <!--if true would not generate all comments-->
@@ -23,7 +25,7 @@
             <property name="suppressDateFormat" value="false"/>
             <!--if true would not generate orm annotation-->
             <property name="suppressAnnotation" value="false"/>
-            <!--orm annotation generate type : default or jpa-->
+            <!--orm annotation generate type when suppressAnnotation=false : default or jpa-->
             <property name="annotationType" value="default"/>
         </commentGenerator>
 
