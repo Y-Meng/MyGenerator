@@ -13,5 +13,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DataTable {
     String name();
-    String comment();
+    String comment() default "";
 }

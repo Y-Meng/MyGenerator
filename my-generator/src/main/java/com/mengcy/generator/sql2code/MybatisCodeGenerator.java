@@ -16,11 +16,11 @@ import java.util.List;
  * @author mengcy
  * @date 2019/4/23
  */
-public class CodeGeneratorCli {
+public class MybatisCodeGenerator {
 
     public static void main(String[] args){
 
-        String configPath = CodeGeneratorCli.class.getResource("/generatorConfig.xml").getPath();
+        String configPath = MybatisCodeGenerator.class.getResource("/generatorConfig.xml").getPath();
         if(args.length > 0){
             configPath = args[0];
         }

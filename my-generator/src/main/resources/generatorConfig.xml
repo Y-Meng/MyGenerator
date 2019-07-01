@@ -5,13 +5,14 @@
 <generatorConfiguration>
 
     <!-- properties -->
-    <properties resource="jdbc.properties"/>
+    <properties resource="generator.properties"/>
 
     <!-- !!!! Driver Class Path !!!! -->
     <!--<classPathEntry location="${driver}"/>-->
 
     <context id="context" targetRuntime="MyBatis3">
 
+        <!-- !!!! override mapper.xml !!!! -->
         <plugin type="com.mengcy.generator.sql2code.plugin.XmlOverridePlugin"></plugin>
 
         <!-- !!!! Comment Generator Gonfigurations !!!! -->
@@ -30,10 +31,10 @@
         </commentGenerator>
 
         <!-- !!!! Database Configurations !!!! -->
-        <jdbcConnection driverClass="${jdbc.driver}"
-                        connectionURL="${jdbc.url}"
-                        userId="${jdbc.username}"
-                        password="${jdbc.password}"/>
+        <jdbcConnection driverClass="${generator.jdbc.driver}"
+                        connectionURL="${generator.jdbc.url}"
+                        userId="${generator.jdbc.username}"
+                        password="${generator.jdbc.password}"/>
 
         <javaTypeResolver>
             <property name="forceBigDecimals" value="false"/>

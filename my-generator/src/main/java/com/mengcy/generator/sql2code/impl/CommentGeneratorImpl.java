@@ -130,9 +130,11 @@ public class CommentGeneratorImpl implements CommentGenerator{
     }
 
     private void addFieldJavaDoc(Field field, IntrospectedTable table, IntrospectedColumn column) {
-        field.addJavaDocLine("/**");
-        field.addJavaDocLine(" * " + column.getRemarks());
-        field.addJavaDocLine(" */");
+        if(!StringUtils.isNullOrEmpty(column.getRemarks())) {
+            field.addJavaDocLine("/**");
+            field.addJavaDocLine(" * " + column.getRemarks());
+            field.addJavaDocLine(" */");
+        }
     }
 
     @Override

@@ -8,6 +8,7 @@ import java.util.List;
 /**
  * @author mengcy
  * @date 2019/4/26
+ * 强制覆盖已存在mapper.xml
  */
 public class XmlOverridePlugin extends PluginAdapter{
 
