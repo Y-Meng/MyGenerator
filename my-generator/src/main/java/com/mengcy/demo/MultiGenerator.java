@@ -1,4 +1,4 @@
-package com.mengcy.generator.tpl2code;
+package com.mengcy.demo;
 
 import com.mengcy.generator.tpl2code.config.GeneratorConfig;
 import com.mengcy.generator.tpl2code.model.Table;
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * 代码生成类
  */
-public class RunGenerator {
+public class MultiGenerator {
 
 	/**
 	 * 自动代码生成

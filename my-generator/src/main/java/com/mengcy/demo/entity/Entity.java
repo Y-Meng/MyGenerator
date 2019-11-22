@@ -1,4 +1,4 @@
-package com.mengcy.generator.code2sql.scan;
+package com.mengcy.demo.entity;
 
 import com.mengcy.generator.annotation.DataTable;
 

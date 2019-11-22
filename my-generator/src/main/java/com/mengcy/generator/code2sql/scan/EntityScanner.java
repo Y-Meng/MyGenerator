@@ -12,7 +12,7 @@ import java.util.Set;
  */
 public class EntityScanner {
 
-    public Set<BeanDefinition> scanAnnotationedEntity(String basePackage){
+    public Set<BeanDefinition> scanAnnotationEntity(String basePackage){
 
         ClassPathScanningCandidateComponentProvider provider =
                 new ClassPathScanningCandidateComponentProvider(false);

@@ -1,4 +1,4 @@
-package com.mengcy.generator.sql2code;
+package com.mengcy.demo;
 
 import org.mybatis.generator.api.MyBatisGenerator;
 import org.mybatis.generator.config.Configuration;

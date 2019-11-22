@@ -1,4 +1,4 @@
-package com.mengcy.generator.code2sql.listener;
+package com.mengcy.generator.code2sql.spring;
 
 /**
  * @author mengcy
