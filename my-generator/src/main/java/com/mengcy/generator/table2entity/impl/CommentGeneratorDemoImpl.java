@@ -1,4 +1,4 @@
-package com.mengcy.generator.sql2code.impl;
+package com.mengcy.generator.table2entity.impl;
 
 import org.mybatis.generator.api.CommentGenerator;
 import org.mybatis.generator.api.IntrospectedColumn;

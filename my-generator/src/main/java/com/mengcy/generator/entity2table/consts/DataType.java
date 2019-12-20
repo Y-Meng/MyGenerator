@@ -1,4 +1,4 @@
-package com.mengcy.generator.annotation;
+package com.mengcy.generator.entity2table.consts;
 
 /**
  * @author mengcy

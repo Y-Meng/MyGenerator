@@ -6,12 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @author mengcy
- * @date 2019/4/25
+ * @author mengcy 2019/12/20
+ * 注释内容注解
  */
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DataTable {
-    String name();
-    String comment() default "";
+public @interface Comment {
+    String value() default "";
 }

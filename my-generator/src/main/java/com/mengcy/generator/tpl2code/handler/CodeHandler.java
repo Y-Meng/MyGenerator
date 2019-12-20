@@ -1,4 +1,4 @@
-package com.mengcy.generator.tpl2code.worker;
+package com.mengcy.generator.tpl2code.handler;
 
 import com.mengcy.generator.tpl2code.config.GeneratorConfig;
 import com.mengcy.generator.tpl2code.model.Table;
@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by zkzc-mcy on 2017/11/7.
  */
-public class CodeGenerator{
+public class CodeHandler {
 
 
     public static void  generate(GeneratorConfig config, List<Table> tables) {
@@ -27,7 +27,7 @@ public class CodeGenerator{
             codeDir.mkdirs();
         }
 
-        String templateRootPath = CodeGenerator.class.getResource(config.getTemplateRoot()).getPath();
+        String templateRootPath = CodeHandler.class.getResource(config.getTemplateRoot()).getPath();
         File templateDir = new File(templateRootPath);
         if(!templateDir.exists()){
             System.out.println("模板不存在");

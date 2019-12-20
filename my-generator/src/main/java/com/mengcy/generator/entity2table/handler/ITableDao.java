@@ -1,4 +1,6 @@
-package com.mengcy.generator.code2sql.worker;
+package com.mengcy.generator.entity2table.handler;
+
+import com.mengcy.generator.entity2table.handler.mysql.MysqlColumn;
 
 import java.util.List;
 import java.util.Map;

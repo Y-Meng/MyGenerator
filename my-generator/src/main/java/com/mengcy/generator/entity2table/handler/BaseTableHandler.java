@@ -1,7 +1,8 @@
-package com.mengcy.generator.code2sql.worker;
+package com.mengcy.generator.entity2table.handler;
 
-import com.mengcy.generator.code2sql.config.GeneratorConfig;
-import com.mengcy.generator.code2sql.scan.EntityScanner;
+import com.mengcy.generator.entity2table.config.GeneratorConfig;
+import com.mengcy.generator.entity2table.handler.mysql.MysqlTableHandler;
+import com.mengcy.generator.entity2table.scan.EntityScanner;
 import org.springframework.beans.factory.config.BeanDefinition;
 
 import java.util.Set;
@@ -9,7 +10,7 @@ import java.util.Set;
 /**
  * @author mengcy 2019/9/10
  */
-public abstract class BaseTableGenerator {
+public abstract class BaseTableHandler {
 
     public void generate(GeneratorConfig config){
 
@@ -21,7 +22,7 @@ public abstract class BaseTableGenerator {
         EntityScanner scanner = new EntityScanner();
         Set<BeanDefinition> beans = scanner.scanAnnotationEntity(config.getModelScan());
 
-        BaseTableGenerator tableGenerator = new MysqlTableGenerator();
+        BaseTableHandler tableGenerator = new MysqlTableHandler();
         tableGenerator.generateTable(config, beans);
     }
 

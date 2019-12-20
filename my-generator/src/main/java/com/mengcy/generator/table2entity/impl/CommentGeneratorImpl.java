@@ -1,4 +1,4 @@
-package com.mengcy.generator.sql2code.impl;
+package com.mengcy.generator.table2entity.impl;
 
 import com.mengcy.generator.util.JdbcTypeParser;
 import com.mysql.jdbc.StringUtils;

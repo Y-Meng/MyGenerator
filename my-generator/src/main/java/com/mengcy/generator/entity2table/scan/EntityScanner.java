@@ -1,6 +1,6 @@
-package com.mengcy.generator.code2sql.scan;
+package com.mengcy.generator.entity2table.scan;
 
-import com.mengcy.generator.annotation.DataTable;
+import com.mengcy.generator.entity2table.consts.DataTable;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;

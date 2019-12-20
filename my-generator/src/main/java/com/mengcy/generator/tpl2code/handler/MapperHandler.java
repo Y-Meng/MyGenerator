@@ -1,4 +1,4 @@
-package com.mengcy.generator.tpl2code.worker;
+package com.mengcy.generator.tpl2code.handler;
 
 import com.mengcy.generator.tpl2code.config.GeneratorConfig;
 import com.mengcy.generator.tpl2code.model.Table;
@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Mybatis代码生成类
  */
-public class MapperGenerator {
+public class MapperHandler {
 
 	/**
 	 * generatorConfig模板路径
@@ -27,7 +27,7 @@ public class MapperGenerator {
 	 */
 	public static void generator(GeneratorConfig config, List<Table> tables) throws Exception{
 
-		String generatorConfigTemplatePath = MapperGenerator.class.getResource(config.getTemplateRoot() + GENERATOR_CONFIG_VM).getPath();
+		String generatorConfigTemplatePath = MapperHandler.class.getResource(config.getTemplateRoot() + GENERATOR_CONFIG_VM).getPath();
 
 		String generatorConfigPath = config.getExportRoot();
 		File dir = new File(generatorConfigPath);

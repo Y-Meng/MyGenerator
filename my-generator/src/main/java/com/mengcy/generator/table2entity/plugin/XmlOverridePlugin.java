@@ -1,4 +1,4 @@
-package com.mengcy.generator.sql2code.plugin;
+package com.mengcy.generator.table2entity.plugin;
 
 import org.mybatis.generator.api.GeneratedXmlFile;
 import org.mybatis.generator.api.IntrospectedTable;

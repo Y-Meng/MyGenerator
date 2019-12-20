@@ -1,13 +1,13 @@
 package com.mengcy.demo;
 
-import com.mengcy.generator.code2sql.config.GeneratorConfig;
-import com.mengcy.generator.code2sql.worker.MysqlTableGenerator;
+import com.mengcy.generator.entity2table.config.GeneratorConfig;
+import com.mengcy.generator.entity2table.handler.mysql.MysqlTableHandler;
 
 /**
  * @author mengcy
  * @date 2019/4/25
  */
-public class Code2SqlGenerator {
+public class Entity2TableGenerator {
 
     public static void main(String[] args){
 
@@ -16,7 +16,7 @@ public class Code2SqlGenerator {
         config.setModelScan("com.mengcy");
         config.setDdlAuto("create");
 
-        MysqlTableGenerator generator = new MysqlTableGenerator();
+        MysqlTableHandler generator = new MysqlTableHandler();
         generator.generate(config);
     }
 }

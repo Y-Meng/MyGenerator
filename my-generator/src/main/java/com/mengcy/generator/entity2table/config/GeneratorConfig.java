@@ -1,4 +1,4 @@
-package com.mengcy.generator.code2sql.config;
+package com.mengcy.generator.entity2table.config;
 
 /**
  * @author mengcy 2019/9/10

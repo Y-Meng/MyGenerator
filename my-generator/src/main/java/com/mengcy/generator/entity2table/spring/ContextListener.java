@@ -1,4 +1,4 @@
-package com.mengcy.generator.code2sql.spring;
+package com.mengcy.generator.entity2table.spring;
 
 /**
  * @author mengcy

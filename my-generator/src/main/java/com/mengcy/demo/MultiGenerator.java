@@ -2,9 +2,9 @@ package com.mengcy.demo;
 
 import com.mengcy.generator.tpl2code.config.GeneratorConfig;
 import com.mengcy.generator.tpl2code.model.Table;
-import com.mengcy.generator.tpl2code.worker.CodeGenerator;
-import com.mengcy.generator.tpl2code.worker.MapperGenerator;
-import com.mengcy.generator.tpl2code.worker.TableLoader;
+import com.mengcy.generator.tpl2code.handler.CodeHandler;
+import com.mengcy.generator.tpl2code.handler.MapperHandler;
+import com.mengcy.generator.tpl2code.handler.TableLoader;
 
 import java.util.List;
 
@@ -25,10 +25,10 @@ public class MultiGenerator {
 		if(tables != null && tables.size() > 0){
 			// mapper代码生成
 			if(config.getEnableMapper()){
-				MapperGenerator.generator(config, tables);
+				MapperHandler.generator(config, tables);
 			}
 			// 模板代码生成
-			CodeGenerator.generate(config, tables);
+			CodeHandler.generate(config, tables);
 		}else{
 			System.out.println("未查询到目标数据表");
 		}

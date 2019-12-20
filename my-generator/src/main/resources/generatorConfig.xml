@@ -16,7 +16,7 @@
         <plugin type="com.mengcy.generator.sql2code.plugin.XmlOverridePlugin"></plugin>
 
         <!-- !!!! Comment Generator Gonfigurations !!!! -->
-        <commentGenerator type="com.mengcy.generator.sql2code.impl.CommentGeneratorImpl">
+        <commentGenerator type="com.mengcy.generator.table2entity.impl.CommentGeneratorImpl">
             <!--if true would not generate all comments-->
             <property name="suppressAllComments" value="false"/>
 

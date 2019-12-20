@@ -16,7 +16,7 @@
         <plugin type="org.mybatis.generator.plugins.ToStringPlugin"></plugin>
 
         <!-- 为生成的Java模型类添加序列化接口，并生成serialVersionUID字段 -->
-        <plugin type="com.mengcy.generator.sql2code.plugin.SerializablePlugin">
+        <plugin type="com.mengcy.generator.table2entity.plugin.SerializablePlugin">
             <property name="suppressJavaInterface" value="false"/>
         </plugin>
 
@@ -41,7 +41,7 @@
 
         <!-- 生成的代码去掉注释 -->
         <!-- !!!! Comment Generator Gonfigurations !!!! -->
-        <commentGenerator type="com.mengcy.generator.sql2code.impl.CommentGeneratorImpl">
+        <commentGenerator type="com.mengcy.generator.table2entity.impl.CommentGeneratorImpl">
             <!--if true would not generate all comments-->
             <property name="suppressAllComments" value="false"/>
 
