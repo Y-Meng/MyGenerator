@@ -5,12 +5,15 @@ package com.mengcy.generator.entity2table.config;
  */
 public class GeneratorConfig {
 
-    public static final String AUTO_NONE = "none";
-    public static final String AUTO_CREATE = "create";
-    public static final String AUTO_UPDATE = "update";
+    public static final String AUTO_NONE = "none"; // 不做任何操作
+    public static final String AUTO_CREATE = "create"; // 表删除后重新创建，只删除声明的表
+    public static final String AUTO_UPDATE = "update"; // 修改表结构，只新增字段，不删除字段
 
     /**
-     * 生成表类型：update表示更新，create表示删除原表重新创建，none表示不作任何事
+     * 生成表类型：
+     * update：表示更新，
+     * create：删除原表重新创建，
+     * none：表示不作任何事
      * */
     private String ddlAuto = AUTO_UPDATE;
 

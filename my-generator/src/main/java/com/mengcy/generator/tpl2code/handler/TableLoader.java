@@ -2,7 +2,7 @@ package com.mengcy.generator.tpl2code.handler;
 
 
 import com.mengcy.generator.tpl2code.config.GeneratorConfig;
-import com.mengcy.generator.tpl2code.model.Field;
+import com.mengcy.generator.tpl2code.model.Column;
 import com.mengcy.generator.tpl2code.model.Table;
 import com.mengcy.generator.util.JdbcUtil;
 import com.mengcy.generator.util.StringHelper;
@@ -32,7 +32,7 @@ public class TableLoader {
                 + config.getModuleDatabase()
                 + "' AND table_name LIKE '"
                 + config.getModuleTableName() + "%';";
-        List<Map> result = jdbcUtil.selectByParams(sql, null);
+        List<Map<String, Object>> result = jdbcUtil.selectByParams(sql, null);
 
         List<Table> tables = new ArrayList<>();
         for (Map map : result) {
@@ -41,7 +41,7 @@ public class TableLoader {
             table.setTableName(map.get("TABLE_NAME").toString());
             table.setModelName(StringHelper.lineToHump(table.getTableName().replace(config.getModelTrimPrefix(),"")));
 
-            table.setFields(loadFields(jdbcUtil, table.getTableName(), config.getModelFieldTrimPrefix()));
+            table.setColumns(loadFields(jdbcUtil, table.getTableName(), config.getModelFieldTrimPrefix()));
             tables.add(table);
         }
         jdbcUtil.release();
@@ -49,19 +49,19 @@ public class TableLoader {
         return tables;
     }
 
-    public static List<Field> loadFields(JdbcUtil jdbcUtil, String tableName, String prefix) throws SQLException {
-        List<Field> fields = new ArrayList<>();
+    public static List<Column> loadFields(JdbcUtil jdbcUtil, String tableName, String prefix) throws SQLException {
+        List<Column> columns = new ArrayList<>();
         String sql = "SELECT TABLE_NAME,COLUMN_NAME,DATA_TYPE,COLUMN_COMMENT FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='"
                 + tableName + "'";
-        List<Map> result = jdbcUtil.selectByParams(sql,null);
+        List<Map<String, Object>> result = jdbcUtil.selectByParams(sql,null);
         for(Map map : result){
-            Field field = new Field();
-            field.setFieldName(map.get("COLUMN_NAME").toString());
-            field.setFieldComment(map.get("COLUMN_COMMENT").toString());
-            field.setFieldType(map.get("DATA_TYPE").toString());
-            field.setModelFieldName(StringHelper.lineToHump(field.getFieldName().replace(prefix,"")));
+            Column column = new Column();
+            column.setFieldName(map.get("COLUMN_NAME").toString());
+            column.setFieldComment(map.get("COLUMN_COMMENT").toString());
+            column.setFieldType(map.get("DATA_TYPE").toString());
+            column.setModelFieldName(StringHelper.lineToHump(column.getFieldName().replace(prefix,"")));
         }
 
-        return fields;
+        return columns;
     }
 }

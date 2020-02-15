@@ -16,7 +16,7 @@ public class Table {
     private Boolean generatedId = true;
 
     /** 字段列表*/
-    private List<Field> fields;
+    private List<Column> columns;
 
     public Table(){}
 
@@ -52,11 +52,11 @@ public class Table {
         this.modelName = modelName;
     }
 
-    public List<Field> getFields() {
-        return fields;
+    public List<Column> getColumns() {
+        return columns;
     }
 
-    public void setFields(List<Field> fields) {
-        this.fields = fields;
+    public void setColumns(List<Column> columns) {
+        this.columns = columns;
     }
 }

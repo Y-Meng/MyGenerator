@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * @author mengcy 2019/9/10
  */
-public abstract class BaseTableHandler {
+public abstract class AbstractTableHandler {
 
     public void generate(GeneratorConfig config){
 
@@ -19,12 +19,13 @@ public abstract class BaseTableHandler {
             return;
         }
 
+        // 扫描实体类
         EntityScanner scanner = new EntityScanner();
         Set<BeanDefinition> beans = scanner.scanAnnotationEntity(config.getModelScan());
 
-        BaseTableHandler tableGenerator = new MysqlTableHandler();
-        tableGenerator.generateTable(config, beans);
+        // 生成数据表
+        generateTable(config, beans);
     }
 
-    public abstract void generateTable(GeneratorConfig config, Set<BeanDefinition> beans);
+    protected abstract void generateTable(GeneratorConfig config, Set<BeanDefinition> beans);
 }

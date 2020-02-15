@@ -1,6 +1,5 @@
 package com.mengcy.generator.table2entity.impl;
 
-import com.mengcy.generator.util.JdbcTypeParser;
 import com.mysql.jdbc.StringUtils;
 import org.mybatis.generator.api.CommentGenerator;
 import org.mybatis.generator.api.IntrospectedColumn;
@@ -8,6 +7,9 @@ import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.dom.java.*;
 import org.mybatis.generator.api.dom.xml.XmlElement;
 import org.mybatis.generator.internal.util.StringUtility;
+import org.omg.CORBA.CODESET_INCOMPATIBLE;
+
+import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
@@ -19,14 +21,14 @@ import java.util.Set;
  * JPA 注解兼容 Java Persistence API
  * JPA 注解使用参考 https://www.objectdb.com/api/java/jpa/annotations
  */
-public class CommentGeneratorImpl implements CommentGenerator{
+public class CommentGeneratorImpl implements CommentGenerator {
 
     private static final String DATE_TYPE = "java.util.Date";
+
     private static final String ANNOTATION_DEFAULT = "default";
-    private static final String ANNOTATION_JPA = "jpa";
+    private static final String ANNOTATION_COMMENT = "comment";
 
     private Properties properties = new Properties();
-    private Properties systemPro = System.getProperties();
     private boolean suppressDate = false;
     private boolean suppressDateFormat = false;
     private boolean suppressAllComments = false;
@@ -34,10 +36,12 @@ public class CommentGeneratorImpl implements CommentGenerator{
     private String annotationType = ANNOTATION_DEFAULT;
     private String currentDateStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
-    public CommentGeneratorImpl(){}
+    public CommentGeneratorImpl() {
+    }
 
     /**
      * 配置初始化
+     *
      * @param properties
      */
     @Override
@@ -51,21 +55,22 @@ public class CommentGeneratorImpl implements CommentGenerator{
 
     /**
      * 添加属性配置
+     *
      * @param field
      * @param introspectedTable
      * @param introspectedColumn
      */
     @Override
     public void addFieldComment(Field field, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn) {
-        if(!suppressAllComments){
+        if (!suppressAllComments) {
             addFieldJavaDoc(field, introspectedTable, introspectedColumn);
         }
 
-        if(!suppressAnnotation){
+        if (!suppressAnnotation) {
             addFieldAnnotation(field, introspectedTable, introspectedColumn);
         }
 
-        if(!suppressDateFormat) {
+        if (!suppressDateFormat) {
             if (DATE_TYPE.equals(field.getType().getFullyQualifiedName())) {
                 addDateFormatAnnotation(field);
             }
@@ -79,58 +84,141 @@ public class CommentGeneratorImpl implements CommentGenerator{
 
     private void addFieldAnnotation(Field field, IntrospectedTable table, IntrospectedColumn column) {
 
-        if(ANNOTATION_JPA.equals(annotationType)) {
-            // jpa注解
-            if (column.isIdentity()) {
-                // 主键
-                StringBuilder builder = new StringBuilder("@Id(");
-                builder.append("name = \"").append(column.getActualColumnName()).append("\"");
-                builder.append(", length = ").append(column.getLength());
-                builder.append(")");
-                field.addAnnotation(builder.toString());
-                if(column.isAutoIncrement()){
-                    field.addAnnotation("@GenerateValue");
-                }
+        // jpa注解
+        if (column.isIdentity()) {
+            // 主键
+            StringBuilder builder = new StringBuilder("@Id");
+            field.addAnnotation(builder.toString());
+            if (column.isAutoIncrement()) {
+                field.addAnnotation("@GeneratedValue(strategy=GenerationType.IDENTITY)");
             } else {
-                // 普通字段
-                StringBuilder builder = new StringBuilder("@Column(");
-                builder.append("name = \"").append(column.getActualColumnName()).append("\"");
-                builder.append(", length = ").append(column.getLength());
-                builder.append(", nullable = ").append(column.isNullable());
-                builder.append(")");
-                field.addAnnotation(builder.toString());
+                field.addAnnotation("@GeneratedValue");
             }
-        }else {
-            // 默认自定义注解
-            if(column.isIdentity()){
-                StringBuilder builder = new StringBuilder("@DataId(");
 
-                builder.append(")");
-                field.addAnnotation(builder.toString());
-            }else {
-                StringBuilder builder = new StringBuilder("@DataColumn(");
-                builder.append("name = \"").append(column.getActualColumnName()).append("\"");
+            if (!field.getName().equals(column.getActualColumnName())) {
+                field.addAnnotation("@Column(name = \"" + column.getActualColumnName() + "\")");
+            }
+        } else {
+            // 普通字段
+            StringBuilder builder = new StringBuilder("@Column(");
+            builder.append("name = \"").append(column.getActualColumnName()).append("\"");
 
-                builder.append(", type = \"").append(JdbcTypeParser.parseDataType(column)).append("\"");
+            int jdbcType = column.getJdbcType();
+            if (jdbcType == Types.LONGVARCHAR
+                    || jdbcType == Types.DATE
+                    || jdbcType == Types.TIME
+                    || column.getDefaultValue() != null) {
 
-                if (column.getLength() > 0) {
+                // text、date、time 类型或有默认值 使用 columnDefinition
+                StringBuilder definition = new StringBuilder();
+                switch (jdbcType) {
+                    case Types.LONGVARCHAR:
+                        int len = column.getLength();
+                        switch (len) {
+                            case 65535: // 2^16 - 1
+                                definition.append("text");
+                                break;
+                            case 16777215: // 2^24 - 1
+                                definition.append("mediumtext");
+                                break;
+                            case 2147483647: // 2^32 - 1
+                                definition.append("longtext");
+                                break;
+                            default:
+                                definition.append("text");
+                                break;
+                        }
+                        break;
+                    case Types.DATE:
+                        definition.append("date");
+                        break;
+                    case Types.TIME:
+                        definition.append("time");
+                        break;
+                    case Types.BIT:
+                        definition.append("bit");
+                        break;
+                    case Types.TINYINT:
+                        definition.append("tinyint");
+                        break;
+                    case Types.SMALLINT:
+                        definition.append("smallint");
+                        break;
+                    case Types.INTEGER:
+                        definition.append("int");
+                        break;
+                    case Types.BIGINT:
+                        definition.append("bigint");
+                        break;
+                    case Types.FLOAT:
+                        if(column.getLength() > 0 && column.getScale() > 0) {
+                            definition.append("float(").append(column.getLength()).append(",").append(column.getScale()).append(")");
+                        }else {
+                            definition.append("float");
+                        }
+                        break;
+                    case Types.DOUBLE:
+                        if(column.getLength() > 0 && column.getScale() > 0) {
+                            definition.append("double(").append(column.getLength()).append(",").append(column.getScale()).append(")");
+                        }else {
+                            definition.append("double");
+                        }
+                        break;
+                    case Types.DECIMAL:
+                        if(column.getLength() > 0 && column.getScale() > 0) {
+                            definition.append("decimal(").append(column.getLength()).append(",").append(column.getScale()).append(")");
+                        }else {
+                            definition.append("decimal");
+                        }
+                        break;
+                    case Types.CHAR:
+                        definition.append("char(").append(column.getLength()).append(")");
+                        break;
+                    case Types.VARCHAR:
+                        definition.append("varchar(").append(column.getLength()).append(")");
+                        break;
+                    default:
+                        definition.append(column.getJdbcTypeName().toLowerCase());
+                        break;
+                }
+                if(!column.isNullable()){
+                    definition.append(" NOT NULL");
+                }
+                if(column.getDefaultValue() != null){
+                    if(column.getDefaultValue().equals("CURRENT_TIMESTAMP")){
+                        definition.append(" DEFAULT ").append(column.getDefaultValue());
+                    }else {
+                        definition.append(" DEFAULT '").append(column.getDefaultValue()).append("'");
+                    }
+                }
+
+                builder.append(", columnDefinition=\"").append(definition.toString()).append("\"");
+            } else {
+                if (!column.isNullable()) {
+                    builder.append(", nullable = ").append(column.isNullable());
+                }
+
+                if (jdbcType == Types.VARCHAR || jdbcType == Types.CHAR) {
                     builder.append(", length = ").append(column.getLength());
                 }
 
-                builder.append(", nullable = \"").append(column.isNullable()).append("\"");
-
-                if (!StringUtils.isNullOrEmpty(column.getRemarks())) {
-                    builder.append(", comment = \"").append(column.getRemarks()).append("\"");
+                if (jdbcType == Types.FLOAT || jdbcType == Types.DOUBLE || jdbcType == Types.DECIMAL) {
+                    builder.append(", length = ").append(column.getLength());
+                    builder.append(", scale = ").append(column.getScale());
                 }
-
-                builder.append(")");
-                field.addAnnotation(builder.toString());
             }
+
+            builder.append(")");
+            field.addAnnotation(builder.toString());
+        }
+
+        if (ANNOTATION_COMMENT.equals(annotationType) && column.getRemarks() != null) {
+            field.addAnnotation("@Comment(\"" + column.getRemarks() + "\")");
         }
     }
 
     private void addFieldJavaDoc(Field field, IntrospectedTable table, IntrospectedColumn column) {
-        if(!StringUtils.isNullOrEmpty(column.getRemarks())) {
+        if (!StringUtils.isNullOrEmpty(column.getRemarks())) {
             field.addJavaDocLine("/**");
             field.addJavaDocLine(" * " + column.getRemarks());
             field.addJavaDocLine(" */");
@@ -144,16 +232,16 @@ public class CommentGeneratorImpl implements CommentGenerator{
 
     @Override
     public void addModelClassComment(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
-        if(!suppressAllComments) {
+        if (!suppressAllComments) {
             addClassJavaDoc(topLevelClass, introspectedTable);
         }
 
-        if(!suppressAnnotation) {
+        if (!suppressAnnotation) {
             addClassImportOrmType(topLevelClass);
             addClassAnnotation(topLevelClass, introspectedTable);
         }
 
-        if(!suppressDateFormat){
+        if (!suppressDateFormat) {
             addClassImportDateFormatType(topLevelClass);
         }
     }
@@ -164,31 +252,27 @@ public class CommentGeneratorImpl implements CommentGenerator{
     }
 
     private void addClassImportOrmType(TopLevelClass clz) {
-        if(ANNOTATION_JPA.equals(annotationType)) {
-            clz.addImportedType("javax.persistence.Table");
-            clz.addImportedType("javax.persistence.Id");
-            clz.addImportedType("javax.persistence.Column");
-        }else {
-            clz.addImportedType("com.mengcy.generator.annotation.DataTable");
-            clz.addImportedType("com.mengcy.generator.annotation.DataColumn");
-            clz.addImportedType("com.mengcy.generator.annotation.DataType");
+        if (ANNOTATION_DEFAULT.equals(annotationType)) {
+            clz.addImportedType("javax.persistence.*");
+        } else {
+            clz.addImportedType("javax.persistence.*");
+            clz.addImportedType("com.mengcy.generator.annotation.Comment");
         }
     }
 
     private void addClassAnnotation(TopLevelClass clz, IntrospectedTable table) {
-        if(ANNOTATION_JPA.equals(annotationType)) {
-            clz.addAnnotation("@Table(name = " + table.getTableConfiguration().getTableName() + ")");
-        }else {
-            clz.addAnnotation("@DataTable(name = " + table.getTableConfiguration().getTableName() + ")");
+        clz.addAnnotation("@Table(name = \"" + table.getTableConfiguration().getTableName() + "\")");
+        if (ANNOTATION_COMMENT.equals(annotationType) && table.getRemarks() != null) {
+            clz.addAnnotation("@Comment(\"" + table.getRemarks() + "\")");
         }
     }
 
     private void addClassJavaDoc(TopLevelClass clz, IntrospectedTable table) {
         clz.addJavaDocLine("/**");
-        if(table.getRemarks() != null && table.getRemarks().length() > 0) {
+        if (table.getRemarks() != null && table.getRemarks().length() > 0) {
             clz.addJavaDocLine(" * " + table.getRemarks());
         }
-        if(!suppressDate){
+        if (!suppressDate) {
             clz.addJavaDocLine(" * generate at " + currentDateStr);
         }
         clz.addJavaDocLine(" */");

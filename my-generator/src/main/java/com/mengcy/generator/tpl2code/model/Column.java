@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by zkzc-mcy on 2017/11/8.
  */
-public class Field {
+public class Column {
 
     public static final String FORM_NORMAL = "input";
     public static final String FORM_SELECT = "select";
@@ -26,7 +26,7 @@ public class Field {
 
     private List<KeyValue> modelDefaultValue;
 
-    public Field(){
+    public Column(){
         modelDefaultValue = new ArrayList<>();
     }
 
@@ -132,9 +132,9 @@ public class Field {
     public static void main(String[] args){
         String test = "select(0:删除,1:正常,2:禁用)";
 
-        Field field = new Field();
-        field.setFieldComment(test);
+        Column column = new Column();
+        column.setFieldComment(test);
 
-        System.out.println(field.getModelDefaultValue().get(0).getKey());
+        System.out.println(column.getModelDefaultValue().get(0).getKey());
     }
 }

@@ -13,8 +13,11 @@ public class Entity2TableGenerator {
 
         GeneratorConfig config = new GeneratorConfig();
 
+        config.setDbUrl("jdbc:mysql://localhost:3306/fdp_test");
+        config.setDbUser("marin");
+        config.setDbPwd("marin110");
         config.setModelScan("com.mengcy");
-        config.setDdlAuto("create");
+        config.setDdlAuto("update");
 
         MysqlTableHandler generator = new MysqlTableHandler();
         generator.generate(config);
