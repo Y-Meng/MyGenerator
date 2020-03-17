@@ -21,12 +21,19 @@ public class EntityScanner {
         // 不使用默认的TypeFilter
         provider.addIncludeFilter(new AnnotationTypeFilter(Table.class));
 
-        String[] packages = basePackage.split(",");
+        String[] packages = basePackage.split("[,;\\s]");
         Set<BeanDefinition> beanDefinitionSet = new LinkedHashSet<>();
         for(String pack : packages) {
-            Set<BeanDefinition> beans = provider.findCandidateComponents(pack);
+            Set<BeanDefinition> beans = provider.findCandidateComponents(pack.trim());
             beanDefinitionSet.addAll(beans);
         }
         return beanDefinitionSet;
+    }
+
+    public static void main(String[] args){
+        for (String s : "a,b;c d e".split("[,;\\s]")) {
+
+            System.out.println(s);
+        }
     }
 }
