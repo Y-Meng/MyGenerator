@@ -223,7 +223,7 @@ public class MysqlTableHandler extends AbstractTableHandler {
         Field[] fields = clz.getDeclaredFields();
         for(Field field : fields){
             Class fieldType = field.getType();
-            logger.info("column " + field.getName() + "-" + fieldType.getName());
+            logger.debug("column " + field.getName() + "-" + fieldType.getName());
 
             Transient trans = field.getAnnotation(Transient.class);
             if(trans != null){
