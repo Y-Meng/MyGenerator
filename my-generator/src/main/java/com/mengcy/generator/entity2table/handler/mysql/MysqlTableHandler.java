@@ -1,7 +1,7 @@
 package com.mengcy.generator.entity2table.handler.mysql;
 
 import com.mengcy.generator.annotation.Comment;
-import com.mengcy.generator.entity2table.config.GeneratorConfig;
+import com.mengcy.generator.entity2table.config.TableGenConfig;
 import com.mengcy.generator.entity2table.handler.AbstractTableHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,7 @@ public class MysqlTableHandler extends AbstractTableHandler {
     static Logger logger = LoggerFactory.getLogger(MysqlTableHandler.class);
 
     @Override
-    protected void generateTable(GeneratorConfig config, Set<BeanDefinition> beans) {
+    protected void generateTable(TableGenConfig config, Set<BeanDefinition> beans) {
 
         MysqlDao tableDao = new MysqlDao(config.getDbUrl(), config.getDbUser(), config.getDbPwd());
 
@@ -55,12 +55,12 @@ public class MysqlTableHandler extends AbstractTableHandler {
         for(Map.Entry<String, MysqlTable> entry : tables.entrySet()){
             MysqlTable mysqlTable = entry.getValue();
             String tableName = mysqlTable.getName();
-            if (config.getDdlAuto().equals(GeneratorConfig.AUTO_CREATE)) {
+            if (config.getDdlAuto().equals(TableGenConfig.AUTO_CREATE)) {
                 // 删除表
                 tableDao.dropTable(tableName);
                 // 创建表
                 tableDao.createTable(mysqlTable.toSql());
-            } else if (config.getDdlAuto().equals(GeneratorConfig.AUTO_UPDATE)) {
+            } else if (config.getDdlAuto().equals(TableGenConfig.AUTO_UPDATE)) {
                 // 检查表是否存在
                 boolean exist = tableDao.checkExist(tableName);
                 if (!exist) {

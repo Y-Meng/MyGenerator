@@ -9,7 +9,7 @@
     <artifactId>my-generator</artifactId>
     <version>0.1.1-SNAPSHOT</version>
 
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>

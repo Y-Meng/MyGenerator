@@ -3,7 +3,7 @@ package com.mengcy.generator.entity2table.config;
 /**
  * @author mengcy 2019/9/10
  */
-public class GeneratorConfig {
+public class TableGenConfig {
 
     public static final String AUTO_NONE = "none"; // 不做任何操作
     public static final String AUTO_CREATE = "create"; // 表删除后重新创建，只删除声明的表

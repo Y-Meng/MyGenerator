@@ -1,7 +1,6 @@
 package com.mengcy.generator.entity2table.handler;
 
-import com.mengcy.generator.entity2table.config.GeneratorConfig;
-import com.mengcy.generator.entity2table.handler.mysql.MysqlTableHandler;
+import com.mengcy.generator.entity2table.config.TableGenConfig;
 import com.mengcy.generator.entity2table.scan.EntityScanner;
 import org.springframework.beans.factory.config.BeanDefinition;
 
@@ -12,9 +11,9 @@ import java.util.Set;
  */
 public abstract class AbstractTableHandler {
 
-    public void generate(GeneratorConfig config){
+    public void generate(TableGenConfig config){
 
-        if(GeneratorConfig.AUTO_NONE.equals(config.getDdlAuto())){
+        if(TableGenConfig.AUTO_NONE.equals(config.getDdlAuto())){
             // do nothing
             return;
         }
@@ -27,5 +26,5 @@ public abstract class AbstractTableHandler {
         generateTable(config, beans);
     }
 
-    protected abstract void generateTable(GeneratorConfig config, Set<BeanDefinition> beans);
+    protected abstract void generateTable(TableGenConfig config, Set<BeanDefinition> beans);
 }

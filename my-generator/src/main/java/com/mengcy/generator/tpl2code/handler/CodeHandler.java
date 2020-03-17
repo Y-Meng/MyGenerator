@@ -1,6 +1,6 @@
 package com.mengcy.generator.tpl2code.handler;
 
-import com.mengcy.generator.tpl2code.config.GeneratorConfig;
+import com.mengcy.generator.tpl2code.config.CodeGenConfig;
 import com.mengcy.generator.tpl2code.model.Table;
 import com.mengcy.generator.util.StringHelper;
 import com.mengcy.generator.util.VelocityUtil;
@@ -17,7 +17,7 @@ import java.util.List;
 public class CodeHandler {
 
 
-    public static void  generate(GeneratorConfig config, List<Table> tables) {
+    public static void  generate(CodeGenConfig config, List<Table> tables) {
 
         // 生成代码目录
         String codePath = config.getExportRoot() + "/" + config.getModulePackageName().replaceAll("\\.", "/");

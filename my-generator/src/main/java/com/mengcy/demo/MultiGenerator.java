@@ -1,6 +1,6 @@
 package com.mengcy.demo;
 
-import com.mengcy.generator.tpl2code.config.GeneratorConfig;
+import com.mengcy.generator.tpl2code.config.CodeGenConfig;
 import com.mengcy.generator.tpl2code.model.Table;
 import com.mengcy.generator.tpl2code.handler.CodeHandler;
 import com.mengcy.generator.tpl2code.handler.MapperHandler;
@@ -19,7 +19,7 @@ public class MultiGenerator {
 	 */
 	public static void main(String[] args) throws Exception {
 
-		GeneratorConfig config = GeneratorConfig.init();
+		CodeGenConfig config = CodeGenConfig.init();
 
 		List<Table> tables = TableLoader.loadTables(config);
 		if(tables != null && tables.size() > 0){

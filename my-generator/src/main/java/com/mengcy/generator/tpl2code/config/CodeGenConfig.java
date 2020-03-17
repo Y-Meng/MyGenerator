@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Created by zkzc-mcy on 2017/11/7.
  */
-public class GeneratorConfig {
+public class CodeGenConfig {
 
     private static final String FALSE = "false";
 
@@ -34,10 +34,10 @@ public class GeneratorConfig {
      */
     private  Map<String, String> lastInsertIdTables = new HashMap<>();
 
-    private GeneratorConfig(){}
+    private CodeGenConfig(){}
 
-    public static GeneratorConfig init(){
-        GeneratorConfig config = new GeneratorConfig();
+    public static CodeGenConfig init(){
+        CodeGenConfig config = new CodeGenConfig();
         PropertiesUtil util = PropertiesUtil.getInstance("generator");
         config.setModuleName(util.get("module.name"));
         config.setModuleDatabase(util.get("module.database"));
@@ -54,7 +54,7 @@ public class GeneratorConfig {
         // 输出根目录
         String exportRoot = util.get("generator.export.root");
         if(exportRoot == null || "".equals(exportRoot)){
-            String basePath = GeneratorConfig.class.getResource("/").getPath();
+            String basePath = CodeGenConfig.class.getResource("/").getPath();
             if(basePath.contains("target")){
                 basePath = basePath.split("/target")[0] + "/target/";
             }

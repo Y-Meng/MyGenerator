@@ -1,6 +1,6 @@
 package com.mengcy.generator.tpl2code.handler;
 
-import com.mengcy.generator.tpl2code.config.GeneratorConfig;
+import com.mengcy.generator.tpl2code.config.CodeGenConfig;
 import com.mengcy.generator.tpl2code.model.Table;
 import com.mengcy.generator.util.VelocityUtil;
 import org.apache.velocity.VelocityContext;
@@ -25,7 +25,7 @@ public class MapperHandler {
 	/**
 	 * 根据模板生成generatorConfig.xml文件
 	 */
-	public static void generator(GeneratorConfig config, List<Table> tables) throws Exception{
+	public static void generator(CodeGenConfig config, List<Table> tables) throws Exception{
 
 		String generatorConfigTemplatePath = MapperHandler.class.getResource(config.getTemplateRoot() + GENERATOR_CONFIG_VM).getPath();
 

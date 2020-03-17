@@ -1,7 +1,7 @@
 package com.mengcy.generator.tpl2code.handler;
 
 
-import com.mengcy.generator.tpl2code.config.GeneratorConfig;
+import com.mengcy.generator.tpl2code.config.CodeGenConfig;
 import com.mengcy.generator.tpl2code.model.Column;
 import com.mengcy.generator.tpl2code.model.Table;
 import com.mengcy.generator.util.JdbcUtil;
@@ -23,7 +23,7 @@ public class TableLoader {
      * @return 数据表
      * @throws SQLException
      */
-    public static List<Table> loadTables(GeneratorConfig config) throws SQLException {
+    public static List<Table> loadTables(CodeGenConfig config) throws SQLException {
 
         // 查询定制前缀项目的所有表
         JdbcUtil jdbcUtil = new JdbcUtil(config.getJdbcDriver(), config.getJdbcUrl(),
