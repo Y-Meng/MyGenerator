@@ -67,6 +67,9 @@ public class Entity {
     @Column(name = "bit_decimal", length = 10, scale = 2)
     private BigDecimal bitDecimal;
 
+    @Column(name = "content", columnDefinition="longtext")
+    private String content;
+
     public Integer getId() {
         return id;
     }
@@ -193,5 +196,13 @@ public class Entity {
 
     public void setBitDecimal(BigDecimal bitDecimal) {
         this.bitDecimal = bitDecimal;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

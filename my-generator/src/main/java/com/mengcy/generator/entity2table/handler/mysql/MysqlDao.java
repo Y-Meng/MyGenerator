@@ -91,10 +91,10 @@ public class MysqlDao {
             }
 
             if(!column.isPrimaryKey()) {
-                // text, date, time 或者有默认值
+                // text, date, time 或有默认值
                 Object defaultValue = row.get(MysqlTableColumn.COLUMN_DEFAULT);
 
-                if (defaultValue != null || type.equals("date") || type.equals("time")) {
+                if (defaultValue != null || type.equals("date") || type.equals("time") || type.contains("text")) {
                     StringBuilder definition = new StringBuilder();
                     switch (type) {
                         case "float":
