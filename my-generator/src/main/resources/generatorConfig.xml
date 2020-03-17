@@ -26,8 +26,8 @@
             <property name="suppressDateFormat" value="false"/>
             <!--if true would not generate orm annotation-->
             <property name="suppressAnnotation" value="false"/>
-            <!--orm annotation generate type when suppressAnnotation=false : default or comment-->
-            <property name="annotationType" value="default"/>
+            <!--orm annotation generate type when suppressAnnotation=false : default or jpa-->
+            <property name="annotationType" value="jpa"/>
         </commentGenerator>
 
         <!-- !!!! Database Configurations !!!! -->

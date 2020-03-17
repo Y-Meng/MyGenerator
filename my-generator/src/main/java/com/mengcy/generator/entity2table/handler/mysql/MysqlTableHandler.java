@@ -1,13 +1,11 @@
 package com.mengcy.generator.entity2table.handler.mysql;
 
-import com.mengcy.generator.annotation.Comment;
 import com.mengcy.generator.entity2table.config.TableGenConfig;
 import com.mengcy.generator.entity2table.handler.AbstractTableHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.util.StringUtils;
-
 import javax.persistence.*;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -235,7 +233,6 @@ public class MysqlTableHandler extends AbstractTableHandler {
             Id id = field.getAnnotation(Id.class);
             GeneratedValue generated = field.getAnnotation(GeneratedValue.class);
             Column column = field.getAnnotation(Column.class);
-            Comment comment = field.getAnnotation(Comment.class);
 
             MysqlTableColumn tableColumn = MysqlTypeMap.create(fieldType.getName());
             if(column != null){
@@ -275,19 +272,10 @@ public class MysqlTableHandler extends AbstractTableHandler {
                 primaryKey.add(tableColumn.getName());
             }
 
-            if(comment != null){
-                tableColumn.setComment(comment.value());
-            }
-
             columns.add(tableColumn);
         }
         table.setPrimaryKey(primaryKey);
         table.setColumns(columns);
-
-        if(clz.getAnnotation(Comment.class) != null){
-            Comment comment = (Comment) clz.getDeclaredAnnotation(Comment.class);
-            table.setComment(comment.value());
-        }
 
         return table;
     }

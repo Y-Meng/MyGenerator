@@ -26,7 +26,7 @@ public class CommentGeneratorImpl implements CommentGenerator {
     private static final String DATE_TYPE = "java.util.Date";
 
     private static final String ANNOTATION_DEFAULT = "default";
-    private static final String ANNOTATION_COMMENT = "comment";
+    private static final String ANNOTATION_ORM = "jpa";
 
     private Properties properties = new Properties();
     private boolean suppressDate = false;
@@ -51,6 +51,7 @@ public class CommentGeneratorImpl implements CommentGenerator {
         this.suppressDateFormat = StringUtility.isTrue(properties.getProperty("suppressDateFormat"));
         this.suppressAllComments = StringUtility.isTrue(properties.getProperty("suppressAllComments"));
         this.suppressAnnotation = StringUtility.isTrue(properties.getProperty("suppressAnnotation"));
+        this.annotationType = properties.getProperty("annotationType");
     }
 
     /**
@@ -72,148 +73,160 @@ public class CommentGeneratorImpl implements CommentGenerator {
 
         if (!suppressDateFormat) {
             if (DATE_TYPE.equals(field.getType().getFullyQualifiedName())) {
-                addDateFormatAnnotation(field);
+                addDateFormatAnnotation(field, introspectedColumn);
             }
         }
     }
 
-    private void addDateFormatAnnotation(Field field) {
-        field.addAnnotation("@DateTimeFormat(pattern = \"yyyy-MM-dd HH:mm:ss\")");
-        field.addAnnotation("@JsonFormat(pattern = \"yyyy-MM-dd HH:mm:ss\", timezone=\"GMT+8\")");
+    private void addDateFormatAnnotation(Field field, IntrospectedColumn column) {
+
+        int jdbcType = column.getJdbcType();
+        switch (jdbcType){
+            case Types.DATE:
+                field.addAnnotation("@DateTimeFormat(pattern = \"yyyy-MM-dd\")");
+                field.addAnnotation("@JsonFormat(pattern = \"yyyy-MM-dd\", timezone=\"GMT+8\")");
+                break;
+            case Types.TIME:
+                field.addAnnotation("@DateTimeFormat(pattern = \"HH:mm:ss\")");
+                field.addAnnotation("@JsonFormat(pattern = \"HH:mm:ss\", timezone=\"GMT+8\")");
+                break;
+            default:
+                field.addAnnotation("@DateTimeFormat(pattern = \"yyyy-MM-dd HH:mm:ss\")");
+                field.addAnnotation("@JsonFormat(pattern = \"yyyy-MM-dd HH:mm:ss\", timezone=\"GMT+8\")");
+        }
+
     }
 
     private void addFieldAnnotation(Field field, IntrospectedTable table, IntrospectedColumn column) {
 
-        // jpa注解
-        if (column.isIdentity()) {
-            // 主键
-            StringBuilder builder = new StringBuilder("@Id");
-            field.addAnnotation(builder.toString());
-            if (column.isAutoIncrement()) {
-                field.addAnnotation("@GeneratedValue(strategy=GenerationType.IDENTITY)");
+        if(ANNOTATION_ORM.equals(annotationType)) {
+            // orm注解
+            if (column.isIdentity()) {
+                // 主键
+                StringBuilder builder = new StringBuilder("@Id");
+                field.addAnnotation(builder.toString());
+                if (column.isAutoIncrement()) {
+                    field.addAnnotation("@GeneratedValue(strategy=GenerationType.IDENTITY)");
+                } else {
+                    field.addAnnotation("@GeneratedValue");
+                }
+
+                if (!field.getName().equals(column.getActualColumnName())) {
+                    field.addAnnotation("@Column(name = \"" + column.getActualColumnName() + "\")");
+                }
             } else {
-                field.addAnnotation("@GeneratedValue");
-            }
+                // 普通字段
+                StringBuilder builder = new StringBuilder("@Column(");
+                builder.append("name = \"").append(column.getActualColumnName()).append("\"");
 
-            if (!field.getName().equals(column.getActualColumnName())) {
-                field.addAnnotation("@Column(name = \"" + column.getActualColumnName() + "\")");
-            }
-        } else {
-            // 普通字段
-            StringBuilder builder = new StringBuilder("@Column(");
-            builder.append("name = \"").append(column.getActualColumnName()).append("\"");
+                int jdbcType = column.getJdbcType();
+                if (jdbcType == Types.LONGVARCHAR
+                        || jdbcType == Types.DATE
+                        || jdbcType == Types.TIME
+                        || column.getDefaultValue() != null) {
 
-            int jdbcType = column.getJdbcType();
-            if (jdbcType == Types.LONGVARCHAR
-                    || jdbcType == Types.DATE
-                    || jdbcType == Types.TIME
-                    || column.getDefaultValue() != null) {
+                    // text、date、time 类型或有默认值 使用 columnDefinition
+                    StringBuilder definition = new StringBuilder();
+                    switch (jdbcType) {
+                        case Types.LONGVARCHAR:
+                            int len = column.getLength();
+                            switch (len) {
+                                case 65535: // 2^16 - 1
+                                    definition.append("text");
+                                    break;
+                                case 16777215: // 2^24 - 1
+                                    definition.append("mediumtext");
+                                    break;
+                                case 2147483647: // 2^32 - 1
+                                    definition.append("longtext");
+                                    break;
+                                default:
+                                    definition.append("text");
+                                    break;
+                            }
+                            break;
+                        case Types.DATE:
+                            definition.append("date");
+                            break;
+                        case Types.TIME:
+                            definition.append("time");
+                            break;
+                        case Types.BIT:
+                            definition.append("bit");
+                            break;
+                        case Types.TINYINT:
+                            definition.append("tinyint");
+                            break;
+                        case Types.SMALLINT:
+                            definition.append("smallint");
+                            break;
+                        case Types.INTEGER:
+                            definition.append("int");
+                            break;
+                        case Types.BIGINT:
+                            definition.append("bigint");
+                            break;
+                        case Types.FLOAT:
+                            if (column.getLength() > 0 && column.getScale() > 0) {
+                                definition.append("float(").append(column.getLength()).append(",").append(column.getScale()).append(")");
+                            } else {
+                                definition.append("float");
+                            }
+                            break;
+                        case Types.DOUBLE:
+                            if (column.getLength() > 0 && column.getScale() > 0) {
+                                definition.append("double(").append(column.getLength()).append(",").append(column.getScale()).append(")");
+                            } else {
+                                definition.append("double");
+                            }
+                            break;
+                        case Types.DECIMAL:
+                            if (column.getLength() > 0 && column.getScale() > 0) {
+                                definition.append("decimal(").append(column.getLength()).append(",").append(column.getScale()).append(")");
+                            } else {
+                                definition.append("decimal");
+                            }
+                            break;
+                        case Types.CHAR:
+                            definition.append("char(").append(column.getLength()).append(")");
+                            break;
+                        case Types.VARCHAR:
+                            definition.append("varchar(").append(column.getLength()).append(")");
+                            break;
+                        default:
+                            definition.append(column.getJdbcTypeName().toLowerCase());
+                            break;
+                    }
+                    if (!column.isNullable()) {
+                        definition.append(" NOT NULL");
+                    }
+                    if (column.getDefaultValue() != null) {
+                        if (column.getDefaultValue().equals("CURRENT_TIMESTAMP")) {
+                            definition.append(" DEFAULT ").append(column.getDefaultValue());
+                        } else {
+                            definition.append(" DEFAULT '").append(column.getDefaultValue()).append("'");
+                        }
+                    }
 
-                // text、date、time 类型或有默认值 使用 columnDefinition
-                StringBuilder definition = new StringBuilder();
-                switch (jdbcType) {
-                    case Types.LONGVARCHAR:
-                        int len = column.getLength();
-                        switch (len) {
-                            case 65535: // 2^16 - 1
-                                definition.append("text");
-                                break;
-                            case 16777215: // 2^24 - 1
-                                definition.append("mediumtext");
-                                break;
-                            case 2147483647: // 2^32 - 1
-                                definition.append("longtext");
-                                break;
-                            default:
-                                definition.append("text");
-                                break;
-                        }
-                        break;
-                    case Types.DATE:
-                        definition.append("date");
-                        break;
-                    case Types.TIME:
-                        definition.append("time");
-                        break;
-                    case Types.BIT:
-                        definition.append("bit");
-                        break;
-                    case Types.TINYINT:
-                        definition.append("tinyint");
-                        break;
-                    case Types.SMALLINT:
-                        definition.append("smallint");
-                        break;
-                    case Types.INTEGER:
-                        definition.append("int");
-                        break;
-                    case Types.BIGINT:
-                        definition.append("bigint");
-                        break;
-                    case Types.FLOAT:
-                        if(column.getLength() > 0 && column.getScale() > 0) {
-                            definition.append("float(").append(column.getLength()).append(",").append(column.getScale()).append(")");
-                        }else {
-                            definition.append("float");
-                        }
-                        break;
-                    case Types.DOUBLE:
-                        if(column.getLength() > 0 && column.getScale() > 0) {
-                            definition.append("double(").append(column.getLength()).append(",").append(column.getScale()).append(")");
-                        }else {
-                            definition.append("double");
-                        }
-                        break;
-                    case Types.DECIMAL:
-                        if(column.getLength() > 0 && column.getScale() > 0) {
-                            definition.append("decimal(").append(column.getLength()).append(",").append(column.getScale()).append(")");
-                        }else {
-                            definition.append("decimal");
-                        }
-                        break;
-                    case Types.CHAR:
-                        definition.append("char(").append(column.getLength()).append(")");
-                        break;
-                    case Types.VARCHAR:
-                        definition.append("varchar(").append(column.getLength()).append(")");
-                        break;
-                    default:
-                        definition.append(column.getJdbcTypeName().toLowerCase());
-                        break;
-                }
-                if(!column.isNullable()){
-                    definition.append(" NOT NULL");
-                }
-                if(column.getDefaultValue() != null){
-                    if(column.getDefaultValue().equals("CURRENT_TIMESTAMP")){
-                        definition.append(" DEFAULT ").append(column.getDefaultValue());
-                    }else {
-                        definition.append(" DEFAULT '").append(column.getDefaultValue()).append("'");
+                    builder.append(", columnDefinition=\"").append(definition.toString()).append("\"");
+                } else {
+                    if (!column.isNullable()) {
+                        builder.append(", nullable = ").append(column.isNullable());
+                    }
+
+                    if (jdbcType == Types.VARCHAR || jdbcType == Types.CHAR) {
+                        builder.append(", length = ").append(column.getLength());
+                    }
+
+                    if (jdbcType == Types.FLOAT || jdbcType == Types.DOUBLE || jdbcType == Types.DECIMAL) {
+                        builder.append(", length = ").append(column.getLength());
+                        builder.append(", scale = ").append(column.getScale());
                     }
                 }
 
-                builder.append(", columnDefinition=\"").append(definition.toString()).append("\"");
-            } else {
-                if (!column.isNullable()) {
-                    builder.append(", nullable = ").append(column.isNullable());
-                }
-
-                if (jdbcType == Types.VARCHAR || jdbcType == Types.CHAR) {
-                    builder.append(", length = ").append(column.getLength());
-                }
-
-                if (jdbcType == Types.FLOAT || jdbcType == Types.DOUBLE || jdbcType == Types.DECIMAL) {
-                    builder.append(", length = ").append(column.getLength());
-                    builder.append(", scale = ").append(column.getScale());
-                }
+                builder.append(")");
+                field.addAnnotation(builder.toString());
             }
-
-            builder.append(")");
-            field.addAnnotation(builder.toString());
-        }
-
-        if (ANNOTATION_COMMENT.equals(annotationType) && column.getRemarks() != null) {
-            field.addAnnotation("@Comment(\"" + column.getRemarks() + "\")");
         }
     }
 
@@ -252,18 +265,14 @@ public class CommentGeneratorImpl implements CommentGenerator {
     }
 
     private void addClassImportOrmType(TopLevelClass clz) {
-        if (ANNOTATION_DEFAULT.equals(annotationType)) {
+        if (ANNOTATION_ORM.equals(annotationType)) {
             clz.addImportedType("javax.persistence.*");
-        } else {
-            clz.addImportedType("javax.persistence.*");
-            clz.addImportedType("com.mengcy.generator.annotation.Comment");
         }
     }
 
     private void addClassAnnotation(TopLevelClass clz, IntrospectedTable table) {
-        clz.addAnnotation("@Table(name = \"" + table.getTableConfiguration().getTableName() + "\")");
-        if (ANNOTATION_COMMENT.equals(annotationType) && table.getRemarks() != null) {
-            clz.addAnnotation("@Comment(\"" + table.getRemarks() + "\")");
+        if (ANNOTATION_ORM.equals(annotationType)) {
+            clz.addAnnotation("@Table(name = \"" + table.getTableConfiguration().getTableName() + "\")");
         }
     }
 
