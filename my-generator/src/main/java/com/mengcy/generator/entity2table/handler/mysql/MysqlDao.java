@@ -54,7 +54,7 @@ public class MysqlDao {
     }
 
     public List<MysqlTableColumn> selectColumns(String tableName) {
-        logger.info("SELECT TABLE COLUMNS " + tableName);
+        logger.info("CHECK TABLE COLUMNS " + tableName);
         List<Map<String, Object>> rows = jdbc.selectByParams(SELECT_COLUMNS, tableName);
         List<MysqlTableColumn> columns = new ArrayList<>();
         for(Map<String, Object> row : rows){
