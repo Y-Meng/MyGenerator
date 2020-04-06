@@ -62,7 +62,7 @@
         <!--</table>-->
 
         <table tableName="t_entity" domainObjectName="Entity" mapperName="EntityDao">
-            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
         </table>
 
     </context>

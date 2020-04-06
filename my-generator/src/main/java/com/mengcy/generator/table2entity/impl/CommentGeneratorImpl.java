@@ -12,6 +12,7 @@ import org.omg.CORBA.CODESET_INCOMPATIBLE;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -101,7 +102,7 @@ public class CommentGeneratorImpl implements CommentGenerator {
 
         if(ANNOTATION_ORM.equals(annotationType)) {
             // orm注解
-            if (column.isIdentity()) {
+            if (column.isIdentity() || primaryCheck(table, column)) {
                 // 主键
                 StringBuilder builder = new StringBuilder("@Id");
                 field.addAnnotation(builder.toString());
@@ -228,6 +229,19 @@ public class CommentGeneratorImpl implements CommentGenerator {
                 field.addAnnotation(builder.toString());
             }
         }
+    }
+
+    private boolean primaryCheck(IntrospectedTable table, IntrospectedColumn column) {
+        List<IntrospectedColumn> primaryKeys = table.getPrimaryKeyColumns();
+        if(primaryKeys != null){
+            for (IntrospectedColumn primaryKey : primaryKeys) {
+                if(primaryKey.getActualColumnName().equals(column.getActualColumnName())){
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private void addFieldJavaDoc(Field field, IntrospectedTable table, IntrospectedColumn column) {
