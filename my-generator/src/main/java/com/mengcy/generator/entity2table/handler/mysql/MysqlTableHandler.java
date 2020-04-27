@@ -225,6 +225,7 @@ public class MysqlTableHandler extends AbstractTableHandler {
             Class fieldType = field.getType();
             logger.debug("column " + field.getName() + "-" + fieldType.getName());
 
+
             Transient trans = field.getAnnotation(Transient.class);
             if(trans != null){
                 break;
@@ -233,6 +234,10 @@ public class MysqlTableHandler extends AbstractTableHandler {
             Id id = field.getAnnotation(Id.class);
             GeneratedValue generated = field.getAnnotation(GeneratedValue.class);
             Column column = field.getAnnotation(Column.class);
+
+            if(id == null && column == null){
+                break;
+            }
 
             MysqlTableColumn tableColumn = MysqlTypeMap.create(fieldType.getName());
             if(column != null){
