@@ -8,6 +8,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.util.StringUtils;
 import javax.persistence.*;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
@@ -225,19 +226,21 @@ public class MysqlTableHandler extends AbstractTableHandler {
             Class fieldType = field.getType();
             logger.debug("column " + field.getName() + "-" + fieldType.getName());
 
+            // 静态属性
+            boolean isStatic = Modifier.isStatic(field.getModifiers());
+            if(isStatic){
+                continue;
+            }
 
+            // 忽略
             Transient trans = field.getAnnotation(Transient.class);
             if(trans != null){
-                break;
+                continue;
             }
 
             Id id = field.getAnnotation(Id.class);
             GeneratedValue generated = field.getAnnotation(GeneratedValue.class);
             Column column = field.getAnnotation(Column.class);
-
-            if(id == null && column == null){
-                break;
-            }
 
             MysqlTableColumn tableColumn = MysqlTypeMap.create(fieldType.getName());
             if(column != null){
