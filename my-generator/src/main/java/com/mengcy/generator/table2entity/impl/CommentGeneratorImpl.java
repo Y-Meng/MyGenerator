@@ -286,6 +286,7 @@ public class CommentGeneratorImpl implements CommentGenerator {
 
     private void addClassAnnotation(TopLevelClass clz, IntrospectedTable table) {
         if (ANNOTATION_ORM.equals(annotationType)) {
+            clz.addAnnotation("@Entity");
             clz.addAnnotation("@Table(name = \"" + table.getTableConfiguration().getTableName() + "\")");
         }
     }
